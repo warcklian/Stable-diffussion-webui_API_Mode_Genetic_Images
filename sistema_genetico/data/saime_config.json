@@ -1,0 +1,95 @@
+{
+  "dimensions": {
+    "width": 512,
+    "height": 764,
+    "dpi": 300
+  },
+  "positioning": {
+    "head": {
+      "position_x": 256,
+      "position_y": 200,
+      "width": 100,
+      "height": 120,
+      "percentage_from_top": 50
+    },
+    "eyes": {
+      "position_y": 200,
+      "percentage_from_top": 31,
+      "distance_between": 32
+    },
+    "shoulders": {
+      "position_y": 600,
+      "width": 180,
+      "percentage_from_top": 78,
+      "must_touch_edges": true
+    }
+  },
+  "background": {
+    "color": "#FFFFFF",
+    "no_shadows": true,
+    "uniform_lighting": true,
+    "no_gradients": true
+  },
+  "expression": {
+    "neutral": true,
+    "mouth_closed": true,
+    "looking_at_camera": true,
+    "no_smiling": true
+  },
+  "clothing": {
+    "no_white_clothing": true,
+    "contrasting_colors": true,
+    "no_accessories": true,
+    "no_glasses": true,
+    "no_hats": true,
+    "no_jewelry": true
+  },
+  "makeup": {
+    "no_excessive_makeup": true,
+    "natural_look": true
+  },
+  "framing": {
+    "head_and_shoulders": true,
+    "more_torso_visible": true,
+    "centered_head": true,
+    "frontal_pose": true
+  },
+  "technical": {
+    "prompt_additions": [
+      "venezuelan passport photo",
+      "professional headshot",
+      "official document photo",
+      "clean white background",
+      "proper lighting",
+      "head and shoulders visible",
+      "neutral expression",
+      "looking at camera",
+      "high quality",
+      "realistic"
+    ],
+    "negative_prompt_additions": [
+      "blurry",
+      "low quality",
+      "distorted",
+      "deformed",
+      "ugly",
+      "bad anatomy",
+      "bad proportions",
+      "extra limbs",
+      "missing limbs",
+      "multiple people",
+      "smiling",
+      "laughing",
+      "3/4 view",
+      "side profile",
+      "looking away",
+      "white clothing",
+      "colored background",
+      "shadows",
+      "jewelry",
+      "glasses",
+      "hat",
+      "makeup"
+    ]
+  }
+}

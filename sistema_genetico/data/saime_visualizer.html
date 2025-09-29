@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Especificaciones SAIME</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            min-height: 600px;
+        }
+
+        .specs-panel {
+            padding: 30px;
+            background: #f8f9fa;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .visual-panel {
+            padding: 30px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spec-section {
+            margin-bottom: 25px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid #3498db;
+        }
+
+        .spec-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .spec-section h3::before {
+            content: "📋";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .dimensions-section h3::before { content: "📐"; }
+        .positioning-section h3::before { content: "📍"; }
+        .background-section h3::before { content: "🎨"; }
+        .lighting-section h3::before { content: "💡"; }
+        .pose-section h3::before { content: "👤"; }
+        .expression-section h3::before { content: "😐"; }
+        .clothing-section h3::before { content: "👔"; }
+        .technical-section h3::before { content: "⚙️"; }
+        .prohibited-section h3::before { content: "❌"; }
+        .quality-section h3::before { content: "⭐"; }
+
+        .spec-item {
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            font-weight: bold;
+            color: #34495e;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .spec-value {
+            color: #7f8c8d;
+        }
+
+        .requirements-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .requirements-list li {
+            padding: 5px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .requirements-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .prohibited-list li::before {
+            content: "✗";
+            color: #e74c3c;
+        }
+
+        .canvas-container {
+            position: relative;
+            border: 3px solid #2c3e50;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .canvas-container canvas {
+            display: block;
+            border-radius: 7px;
+        }
+
+        .canvas-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .measurement-line {
+            position: absolute;
+            background: #e74c3c;
+            opacity: 0.8;
+        }
+
+        .measurement-label {
+            position: absolute;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .head-zone {
+            position: absolute;
+            border: 2px dashed #3498db;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 50%;
+        }
+
+        .eye-zone {
+            position: absolute;
+            border: 2px dashed #e67e22;
+            background: rgba(230, 126, 34, 0.1);
+            border-radius: 50%;
+        }
+
+        .shoulder-zone {
+            position: absolute;
+            border: 2px dashed #27ae60;
+            background: rgba(39, 174, 96, 0.1);
+        }
+        
+        .torso-zone {
+            position: absolute;
+            border: 2px dashed #FFA500;
+            background: rgba(255, 165, 0, 0.1);
+        }
+
+        .info-panel {
+            margin-top: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .info-panel h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+        
+        .json-values {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .json-item {
+            margin-bottom: 8px;
+            padding: 5px;
+            background: white;
+            border-radius: 3px;
+            border-left: 3px solid #007bff;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .info-value {
+            color: #7f8c8d;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-ok { background: #27ae60; }
+        .status-warning { background: #f39c12; }
+        .status-error { background: #e74c3c; }
+
+        @media (max-width: 1200px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .visual-panel {
+                order: -1;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #7f8c8d;
+        }
+
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #e74c3c;
+            background: #fdf2f2;
+            border-radius: 8px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📸 Visualizador de Especificaciones SAIME</h1>
+            <p>Estructura y medidas para fotos de pasaporte venezolano</p>
+        </div>
+        
+        <div class="content">
+            <div class="specs-panel">
+                <div id="loading" class="loading">
+                    <h3>🔄 Cargando especificaciones...</h3>
+                    <p>Leyendo archivo saime_specifications.json</p>
+                </div>
+                
+                <div id="error" class="error" style="display: none;">
+                    <h3>❌ Error al cargar</h3>
+                    <p>No se pudo cargar el archivo saime_specifications.json</p>
+                    <p>Verifica que el archivo esté en la misma carpeta que este HTML</p>
+                </div>
+                
+                <div id="specs-content" style="display: none;">
+                    <!-- Las especificaciones se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+            
+            <div class="visual-panel">
+                <div class="canvas-container">
+                    <canvas id="saime-canvas" width="512" height="768"></canvas>
+                    <div class="canvas-overlay" id="canvas-overlay"></div>
+                </div>
+                
+                <div class="info-panel">
+                    <h4>📊 Información de la Imagen</h4>
+                    <div class="info-item">
+                        <span class="info-label">Dimensiones:</span>
+                        <span class="info-value" id="dimensions">512 x 768 px</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Proporción:</span>
+                        <span class="info-value" id="ratio">2:3</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">DPI:</span>
+                        <span class="info-value" id="dpi">300</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Formato:</span>
+                        <span class="info-value" id="format">PNG</span>
+                    </div>
+                </div>
+                
+                <div class="info-panel">
+                    <h4>🎯 Valores de Posicionamiento SAIME</h4>
+                    <div class="info-item">
+                        <span class="info-label">Torso Y:</span>
+                        <span class="info-value" id="torso-y">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Hombros Y:</span>
+                        <span class="info-value" id="shoulder-y">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Cabeza Y:</span>
+                        <span class="info-value" id="head-y">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ojos Y:</span>
+                        <span class="info-value" id="eye-y">-</span>
+                    </div>
+                </div>
+                
+                <div class="info-panel">
+                    <h4>📝 Valores del JSON para Editar</h4>
+                    <div class="json-values">
+                        <div class="json-item">
+                            <strong>Torso:</strong> y: <span id="json-torso-y">650</span>px (85%)
+                        </div>
+                        <div class="json-item">
+                            <strong>Hombros:</strong> y: <span id="json-shoulder-y">500</span>px (65%)
+                        </div>
+                        <div class="json-item">
+                            <strong>Cabeza:</strong> y: <span id="json-head-y">300</span>px (39%)
+                        </div>
+                        <div class="json-item">
+                            <strong>Ojos:</strong> y: <span id="json-eye-y">250</span>px (33%)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Función para cargar y mostrar las especificaciones SAIME
+        async function loadSAIMESpecs() {
+            try {
+                const response = await fetch('saime_specifications.json');
+                if (!response.ok) {
+                    throw new Error('No se pudo cargar el archivo JSON');
+                }
+                
+                const data = await response.json();
+                displaySpecs(data.saime_specifications);
+                drawSAIMECanvas(data.saime_specifications);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('specs-content').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Función para mostrar las especificaciones en el panel
+        function displaySpecs(specs) {
+            const container = document.getElementById('specs-content');
+            
+            // Dimensiones
+            container.innerHTML += `
+                <div class="spec-section dimensions-section">
+                    <h3>Dimensiones</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Ancho:</span>
+                        <span class="spec-value">${specs.dimensions.width} px</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Alto:</span>
+                        <span class="spec-value">${specs.dimensions.height} px</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Descripción:</span>
+                        <span class="spec-value">${specs.dimensions.description}</span>
+                    </div>
+                </div>
+            `;
+
+            // Posicionamiento
+            container.innerHTML += `
+                <div class="spec-section positioning-section">
+                    <h3>Posicionamiento</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Cabeza (X,Y):</span>
+                        <span class="spec-value">${specs.positioning.head_position.x}, ${specs.positioning.head_position.y} px</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Ojos (Y):</span>
+                        <span class="spec-value">${specs.positioning.eye_position.y} px</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Hombros (Y):</span>
+                        <span class="spec-value">${specs.positioning.shoulder_position.y} px</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Ancho Hombros:</span>
+                        <span class="spec-value">${specs.positioning.shoulder_position.width} px</span>
+                    </div>
+                </div>
+            `;
+
+            // Fondo
+            container.innerHTML += `
+                <div class="spec-section background-section">
+                    <h3>Fondo</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Color:</span>
+                        <span class="spec-value">${specs.background.color}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Tipo:</span>
+                        <span class="spec-value">${specs.background.type}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Requisitos:</span>
+                        <ul class="requirements-list">
+                            ${specs.background.requirements.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Iluminación
+            container.innerHTML += `
+                <div class="spec-section lighting-section">
+                    <h3>Iluminación</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Tipo:</span>
+                        <span class="spec-value">${specs.lighting.type}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Requisitos:</span>
+                        <ul class="requirements-list">
+                            ${specs.lighting.requirements.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Pose
+            container.innerHTML += `
+                <div class="spec-section pose-section">
+                    <h3>Pose</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Tipo:</span>
+                        <span class="spec-value">${specs.pose.type}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Requisitos:</span>
+                        <ul class="requirements-list">
+                            ${specs.pose.requirements.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Expresión
+            container.innerHTML += `
+                <div class="spec-section expression-section">
+                    <h3>Expresión</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Tipo:</span>
+                        <span class="spec-value">${specs.expression.type}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Requisitos:</span>
+                        <ul class="requirements-list">
+                            ${specs.expression.requirements.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Ropa
+            container.innerHTML += `
+                <div class="spec-section clothing-section">
+                    <h3>Ropa</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Requisitos:</span>
+                        <ul class="requirements-list">
+                            ${specs.clothing.requirements.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Requisitos Técnicos
+            container.innerHTML += `
+                <div class="spec-section technical-section">
+                    <h3>Requisitos Técnicos</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Resolución:</span>
+                        <span class="spec-value">${specs.technical_requirements.resolution}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Formato:</span>
+                        <span class="spec-value">${specs.technical_requirements.format}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Espacio de Color:</span>
+                        <span class="spec-value">${specs.technical_requirements.color_space}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Compresión:</span>
+                        <span class="spec-value">${specs.technical_requirements.compression}</span>
+                    </div>
+                </div>
+            `;
+
+            // Elementos Prohibidos
+            container.innerHTML += `
+                <div class="spec-section prohibited-section">
+                    <h3>Elementos Prohibidos</h3>
+                    <ul class="requirements-list prohibited-list">
+                        ${specs.prohibited_elements.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+
+            // Estándares de Calidad
+            container.innerHTML += `
+                <div class="spec-section quality-section">
+                    <h3>Estándares de Calidad</h3>
+                    <div class="spec-item">
+                        <span class="spec-label">Nitidez:</span>
+                        <span class="spec-value">${specs.quality_standards.sharpness}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Enfoque:</span>
+                        <span class="spec-value">${specs.quality_standards.focus}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Exposición:</span>
+                        <span class="spec-value">${specs.quality_standards.exposure}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Precisión de Color:</span>
+                        <span class="spec-value">${specs.quality_standards.color_accuracy}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Ruido:</span>
+                        <span class="spec-value">${specs.quality_standards.noise}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Artefactos:</span>
+                        <span class="spec-value">${specs.quality_standards.artifacts}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para dibujar el canvas con las especificaciones SAIME
+        function drawSAIMECanvas(specs) {
+            const canvas = document.getElementById('saime-canvas');
+            const ctx = canvas.getContext('2d');
+            const overlay = document.getElementById('canvas-overlay');
+            
+            // Limpiar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Fondo blanco
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Marco exterior (negro)
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            
+            // Marco rojo (guía de hombros)
+            const shoulderY = specs.positioning.shoulder_position.y;
+            const shoulderWidth = specs.positioning.shoulder_position.width;
+            const shoulderX = (canvas.width - shoulderWidth) / 2;
+            
+            ctx.strokeStyle = '#FF0000';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(shoulderX, shoulderY - 20, shoulderWidth, 40);
+            
+            // Línea de ojos
+            const eyeY = specs.positioning.eye_position.y;
+            ctx.strokeStyle = '#FFA500';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, eyeY);
+            ctx.lineTo(canvas.width - 50, eyeY);
+            ctx.stroke();
+            
+            // Línea de cabeza
+            const headY = specs.positioning.head_position.y;
+            ctx.strokeStyle = '#3498DB';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, headY);
+            ctx.lineTo(canvas.width - 50, headY);
+            ctx.stroke();
+            
+            // Crear overlay con zonas
+            const torsoY = specs.positioning.torso_position.y;
+            const torsoWidth = specs.positioning.torso_position.width;
+            const torsoX = (canvas.width - torsoWidth) / 2;
+            
+            overlay.innerHTML = `
+                <div class="torso-zone" style="
+                    left: ${torsoX}px;
+                    top: ${torsoY - 30}px;
+                    width: ${torsoWidth}px;
+                    height: 60px;
+                "></div>
+                
+                <div class="shoulder-zone" style="
+                    left: ${shoulderX}px;
+                    top: ${shoulderY - 20}px;
+                    width: ${shoulderWidth}px;
+                    height: 40px;
+                "></div>
+                
+                <div class="head-zone" style="
+                    left: ${specs.positioning.head_position.x - 60}px;
+                    top: ${specs.positioning.head_position.y - 80}px;
+                    width: 120px;
+                    height: 160px;
+                "></div>
+                
+                <div class="eye-zone" style="
+                    left: ${specs.positioning.head_position.x - 20}px;
+                    top: ${specs.positioning.eye_position.y - 10}px;
+                    width: 40px;
+                    height: 20px;
+                "></div>
+                
+                <div class="measurement-line" style="
+                    left: 10px;
+                    top: ${torsoY}px;
+                    width: 30px;
+                    height: 2px;
+                "></div>
+                <div class="measurement-label" style="
+                    left: 15px;
+                    top: ${torsoY + 10}px;
+                ">Torso: ${torsoY}px (85%)</div>
+                
+                <div class="measurement-line" style="
+                    left: 10px;
+                    top: ${shoulderY}px;
+                    width: 30px;
+                    height: 2px;
+                "></div>
+                <div class="measurement-label" style="
+                    left: 15px;
+                    top: ${shoulderY + 10}px;
+                ">Hombros: ${shoulderY}px (65%)</div>
+                
+                <div class="measurement-line" style="
+                    left: 10px;
+                    top: ${headY}px;
+                    width: 30px;
+                    height: 2px;
+                "></div>
+                <div class="measurement-label" style="
+                    left: 15px;
+                    top: ${headY + 10}px;
+                ">Cabeza: ${headY}px (39%)</div>
+                
+                <div class="measurement-line" style="
+                    left: 10px;
+                    top: ${eyeY}px;
+                    width: 30px;
+                    height: 2px;
+                "></div>
+                <div class="measurement-label" style="
+                    left: 15px;
+                    top: ${eyeY - 15}px;
+                ">Ojos: ${eyeY}px (33%)</div>
+            `;
+            
+            // Actualizar información
+            document.getElementById('dimensions').textContent = `${specs.dimensions.width} x ${specs.dimensions.height} px`;
+            document.getElementById('ratio').textContent = `${specs.dimensions.width/specs.dimensions.height}`;
+            document.getElementById('dpi').textContent = specs.technical_requirements.resolution;
+            
+            // Mostrar valores editables
+            document.getElementById('torso-y').textContent = `${torsoY}px (85%)`;
+            document.getElementById('shoulder-y').textContent = `${shoulderY}px (65%)`;
+            document.getElementById('head-y').textContent = `${headY}px (39%)`;
+            document.getElementById('eye-y').textContent = `${eyeY}px (33%)`;
+            document.getElementById('format').textContent = specs.technical_requirements.format;
+            
+            // Mostrar valores del JSON
+            document.getElementById('json-torso-y').textContent = specs.positioning.torso_position.y;
+            document.getElementById('json-shoulder-y').textContent = specs.positioning.shoulder_position.y;
+            document.getElementById('json-head-y').textContent = specs.positioning.head_position.y;
+            document.getElementById('json-eye-y').textContent = specs.positioning.eye_position.y;
+        }
+
+        // Cargar las especificaciones cuando se carga la página
+        document.addEventListener('DOMContentLoaded', loadSAIMESpecs);
+    </script>
+</body>
+</html>

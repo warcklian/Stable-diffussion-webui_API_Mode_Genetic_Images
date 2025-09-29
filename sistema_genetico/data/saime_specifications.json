@@ -1,0 +1,128 @@
+{
+  "saime_specifications": {
+    "description": "Especificaciones fijas SAIME para fotos de pasaporte venezolano",
+    "version": "1.0",
+    "last_updated": "2025-01-26",
+    
+    "dimensions": {
+      "width": 512,
+      "height": 768,
+      "description": "Dimensiones exactas para SAIME (512x768 píxeles)"
+    },
+    
+    "positioning": {
+      "torso_position": {
+        "x": 256,
+        "y": 600,
+        "width": 300,
+        "description": "Posición del torso (85% desde arriba, ancho 200px - pegado hasta abajo)"
+      },
+      "shoulder_position": {
+        "x": 256,
+        "y": 500,
+        "width": 300,
+        "description": "Posición de hombros (65% desde arriba, ancho 180px - proporcional desde torso)"
+      },
+      "head_position": {
+        "x": 256,
+        "y": 380,
+        "description": "Posición de la cabeza (39% desde arriba - proporcional desde hombros)"
+      },
+      "eye_position": {
+        "x": 256,
+        "y": 370,
+        "description": "Posición de los ojos (33% desde arriba - proporcional desde cabeza)"
+      }
+    },
+    
+    "background": {
+      "color": "white",
+      "type": "solid",
+      "description": "Fondo blanco sólido obligatorio",
+      "requirements": [
+        "Sin gradientes",
+        "Sin texturas", 
+        "Sin sombras",
+        "Sin patrones",
+        "Blanco puro #FFFFFF"
+      ]
+    },
+    
+    "lighting": {
+      "type": "uniform",
+      "description": "Iluminación uniforme sin sombras",
+      "requirements": [
+        "Sin sombras en el rostro",
+        "Sin sombras en el fondo",
+        "Iluminación frontal",
+        "Sin efectos dramáticos"
+      ]
+    },
+    
+    "pose": {
+      "type": "frontal",
+      "description": "Pose frontal obligatoria",
+      "requirements": [
+        "Vista de frente",
+        "Cabeza centrada",
+        "Hombros alineados",
+        "Sin inclinación"
+      ]
+    },
+    
+    "expression": {
+      "type": "neutral",
+      "description": "Expresión neutral obligatoria",
+      "requirements": [
+        "Sin sonrisas",
+        "Sin gestos",
+        "Boca cerrada",
+        "Mirada al frente"
+      ]
+    },
+    
+    "clothing": {
+      "requirements": [
+        "Colores contrastantes con fondo blanco",
+        "Sin ropa blanca",
+        "Sin accesorios",
+        "Sin gafas (excepto médicas sin reflejos)",
+        "Sin sombreros",
+        "Sin joyas visibles"
+      ]
+    },
+    
+    "technical_requirements": {
+      "resolution": "300 DPI",
+      "format": "PNG",
+      "color_space": "RGB",
+      "compression": "Lossless"
+    },
+    
+    "prohibited_elements": [
+      "Sonrisas",
+      "Gestos",
+      "Accesorios",
+      "Ropa blanca",
+      "Fondos de colores",
+      "Sombras",
+      "Gradientes",
+      "Texturas en fondo",
+      "Iluminación dramática",
+      "Poses no frontales",
+      "Inclinación de cabeza",
+      "Gafas con reflejos",
+      "Sombreros",
+      "Joyas visibles"
+    ],
+    
+    "quality_standards": {
+      "sharpness": "Máxima nitidez",
+      "focus": "Enfoque perfecto",
+      "exposure": "Exposición correcta",
+      "color_accuracy": "Colores naturales",
+      "noise": "Sin ruido digital",
+      "artifacts": "Sin artefactos de compresión"
+    }
+  }
+}

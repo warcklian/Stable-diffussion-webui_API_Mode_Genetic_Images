@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 Sistema de Generación Masiva Genética</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            font-weight: 500;
+        }
+
+        .model-selector {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #2196f3;
+        }
+
+        .model-selector h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .tab.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(0, 123, 255, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .genetic-tab {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .massive-tab {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .saime-tab {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 1.3em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .diversity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .diversity-control {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .diversity-control label {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .diversity-control select {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #333;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #dc3545, #e74c3c);
+            color: white;
+        }
+
+        .btn-open {
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+            color: white;
+        }
+
+        .status-display {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .terminal-panel {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: #333;
+            color: #fff;
+            padding: 10px 15px;
+            margin: -20px -20px 15px -20px;
+            border-radius: 10px 10px 0 0;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-line {
+            margin: 2px 0;
+            word-wrap: break-word;
+        }
+
+        .terminal-success {
+            color: #00ff00;
+        }
+
+        .terminal-info {
+            color: #00bfff;
+        }
+
+        .terminal-warning {
+            color: #ffaa00;
+        }
+
+        .terminal-error {
+            color: #ff4444;
+        }
+
+        .terminal-progress {
+            color: #ffff00;
+        }
+
+        .terminal-timestamp {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745, #20c997);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .diversity-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🧬 Sistema de Generación Masiva Genética</h1>
+            
+            <div class="status-bar">
+                <div class="status-item">
+                    <span id="webui-status">❌ WebUI Status: Checking...</span>
+                </div>
+                <div class="status-item">
+                    <span id="generation-status">⏹️ Generation: Ready</span>
+                </div>
+            </div>
+
+            <div class="model-selector">
+                <h3>🎨 Model Selector</h3>
+                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <select id="model-select" style="flex: 1; min-width: 300px;">
+                        <option value="">Loading models...</option>
+                    </select>
+                    <div class="file-actions">
+                        <button class="btn btn-primary" onclick="refreshFiles()">🔄</button>
+                        <button class="btn btn-success" onclick="openOutputFolder()">📂</button>
+                        <span id="file-count">0 files</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('genetic')">🧬 Genético</div>
+            <div class="tab" onclick="switchTab('massive')">📄 Masivo</div>
+            <div class="tab" onclick="switchTab('saime')">📐 SAIME</div>
+        </div>
+
+        <!-- Genetic Tab -->
+        <div id="genetic-tab" class="tab-content genetic-tab active">
+            <div class="action-buttons">
+                <button class="btn btn-large btn-generate" onclick="generateGenetic()">
+                    🧬 Generar Imágenes Genéticas
+                </button>
+                <button class="btn btn-large btn-stop" onclick="stopGeneration()">
+                    ⏹️ Detener Generación
+                </button>
+                <button class="btn btn-warning" onclick="clearTerminal()">
+                    🗑️ Limpiar Terminal
+                </button>
+            </div>
+
+            <div class="form-section">
+                <h3>⚙️ Configuración Básica</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="nacionalidad">🌍 Nacionalidad:</label>
+                        <select id="nacionalidad" name="nacionalidad">
+                            <option value="Venezuela" selected>Venezuela</option>
+                            <option value="Colombia">Colombia</option>
+                            <option value="Mexico">Mexico</option>
+                            <option value="Brazil">Brazil</option>
+                            <option value="Argentina">Argentina</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="genero">👤 Género:</label>
+                        <select id="genero" name="genero">
+                            <option value="hombre" selected>Hombre</option>
+                            <option value="mujer">Mujer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="region">🏛️ Región:</label>
+                        <select id="region" name="region">
+                            <option value="aleatorio" selected>Aleatorio</option>
+                            <option value="caracas">Caracas</option>
+                            <option value="maracaibo">Maracaibo</option>
+                            <option value="valencia">Valencia</option>
+                            <option value="barquisimeto">Barquisimeto</option>
+                            <option value="merida">Merida</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cantidad">🔢 Cantidad:</label>
+                        <input type="number" id="cantidad" name="cantidad" min="1" max="50" value="5" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edad_min">📅 Edad Mínima:</label>
+                        <input type="number" id="edad_min" name="edad_min" min="18" max="80" value="25" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edad_max">📅 Edad Máxima:</label>
+                        <input type="number" id="edad_max" name="edad_max" min="18" max="80" value="60" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cfg_scale">⚙️ CFG Scale:</label>
+                        <input type="number" id="cfg_scale" name="cfg_scale" min="1" max="20" step="0.1" value="7.0" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="steps">🔄 Steps:</label>
+                        <input type="number" id="steps" name="steps" min="10" max="50" value="20" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terminal Panel -->
+            <div class="terminal-panel" id="terminal-panel">
+                <div class="terminal-header">
+                    <span>🖥️ Terminal de Generación</span>
+                    <span id="terminal-status">Listo</span>
+                </div>
+                <div id="terminal-content">
+                    <div class="terminal-line terminal-info">Sistema genético inicializado correctamente</div>
+                    <div class="terminal-line terminal-info">Esperando comandos de generación...</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>🎯 Controles de Diversidad Genética</h3>
+                <div class="diversity-grid">
+                    <div class="diversity-control">
+                        <label for="beauty_control">💎 Nivel de Belleza:</label>
+                        <select id="beauty_control" name="beauty_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="muy_bella">Muy Bella</option>
+                            <option value="bella">Bella</option>
+                            <option value="atractiva">Atractiva</option>
+                            <option value="normal">Normal</option>
+                            <option value="poco_atractiva">Poco Atractiva</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="skin_control">🎨 Tono de Piel:</label>
+                        <select id="skin_control" name="skin_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="muy_clara">Muy Clara</option>
+                            <option value="clara">Clara</option>
+                            <option value="media">Media</option>
+                            <option value="morena">Morena</option>
+                            <option value="muy_morena">Muy Morena</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="hair_control">💇 Color de Cabello:</label>
+                        <select id="hair_control" name="hair_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="negro">Negro</option>
+                            <option value="marrón_oscuro">Marrón Oscuro</option>
+                            <option value="marrón">Marrón</option>
+                            <option value="castaño">Castaño</option>
+                            <option value="rubio">Rubio</option>
+                            <option value="rojo">Rojo</option>
+                            <option value="gris">Gris</option>
+                            <option value="blanco">Blanco</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="hair_length_control">📏 Largo de Cabello:</label>
+                        <select id="hair_length_control" name="hair_length_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="calvo">Calvo</option>
+                            <option value="muy_corto">Muy Corto</option>
+                            <option value="corto">Corto</option>
+                            <option value="medio">Medio</option>
+                            <option value="largo">Largo</option>
+                            <option value="muy_largo">Muy Largo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="eye_control">👁️ Color de Ojos:</label>
+                        <select id="eye_control" name="eye_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="marrón">Marrón</option>
+                            <option value="marrón_claro">Marrón Claro</option>
+                            <option value="verde">Verde</option>
+                            <option value="azul">Azul</option>
+                            <option value="azul_claro">Azul Claro</option>
+                            <option value="gris">Gris</option>
+                            <option value="avellana">Avellana</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="face_shape_control">👤 Forma de Cara:</label>
+                        <select id="face_shape_control" name="face_shape_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ovalada">Ovalada</option>
+                            <option value="redonda">Redonda</option>
+                            <option value="cuadrada">Cuadrada</option>
+                            <option value="corazón">Corazón</option>
+                            <option value="diamante">Diamante</option>
+                            <option value="triangular">Triangular</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="nose_shape_control">👃 Forma de Nariz:</label>
+                        <select id="nose_shape_control" name="nose_shape_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="recta">Recta</option>
+                            <option value="romana">Romana</option>
+                            <option value="botón">Botón</option>
+                            <option value="bulbosa">Bulbosa</option>
+                            <option value="aquilina">Aquilina</option>
+                            <option value="chata">Chata</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="lip_shape_control">👄 Forma de Labios:</label>
+                        <select id="lip_shape_control" name="lip_shape_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="llenos">Llenos</option>
+                            <option value="finos">Finos</option>
+                            <option value="anchos">Anchos</option>
+                            <option value="estrechos">Estrechos</option>
+                            <option value="definidos">Definidos</option>
+                            <option value="indefinidos">Indefinidos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="eye_shape_control">👁️ Forma de Ojos:</label>
+                        <select id="eye_shape_control" name="eye_shape_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="almendrados">Almendrados</option>
+                            <option value="redondos">Redondos</option>
+                            <option value="ovalados">Ovalados</option>
+                            <option value="hacia_arriba">Hacia Arriba</option>
+                            <option value="hacia_abajo">Hacia Abajo</option>
+                            <option value="hundidos">Hundidos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="jawline_control">🦴 Línea de Mandíbula:</label>
+                        <select id="jawline_control" name="jawline_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="definida">Definida</option>
+                            <option value="suave">Suave</option>
+                            <option value="angular">Angular</option>
+                            <option value="redonda">Redonda</option>
+                            <option value="cuadrada">Cuadrada</option>
+                            <option value="puntiaguda">Puntiaguda</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="cheekbone_control">💎 Pómulos:</label>
+                        <select id="cheekbone_control" name="cheekbone_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="altos">Altos</option>
+                            <option value="bajos">Bajos</option>
+                            <option value="prominentes">Prominentes</option>
+                            <option value="planos">Planos</option>
+                            <option value="definidos">Definidos</option>
+                            <option value="suaves">Suaves</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="eyebrow_control">🤨 Cejas:</label>
+                        <select id="eyebrow_control" name="eyebrow_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="gruesas">Gruesas</option>
+                            <option value="finas">Finas</option>
+                            <option value="arqueadas">Arqueadas</option>
+                            <option value="rectas">Rectas</option>
+                            <option value="redondeadas">Redondeadas</option>
+                            <option value="anguladas">Anguladas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="skin_texture_control">🧴 Textura de Piel:</label>
+                        <select id="skin_texture_control" name="skin_texture_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="suave">Suave</option>
+                            <option value="áspera">Áspera</option>
+                            <option value="grasa">Grasa</option>
+                            <option value="seca">Seca</option>
+                            <option value="mixta">Mixta</option>
+                            <option value="madura">Madura</option>
+                        </select>
+                    </div>
+                    
+                    
+                    <div class="diversity-control">
+                        <label for="freckle_control">🌞 Pecas:</label>
+                        <select id="freckle_control" name="freckle_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguna">Ninguna</option>
+                            <option value="ligeras">Ligeras</option>
+                            <option value="medias">Medias</option>
+                            <option value="pesadas">Pesadas</option>
+                            <option value="esparcidas">Esparcidas</option>
+                            <option value="concentradas">Concentradas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="mole_control">🔴 Lunares:</label>
+                        <select id="mole_control" name="mole_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguno">Ninguno</option>
+                            <option value="uno">Uno</option>
+                            <option value="pocos">Pocos</option>
+                            <option value="varios">Varios</option>
+                            <option value="muchos">Muchos</option>
+                            <option value="faciales">Faciales</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="scar_control">🩹 Cicatrices:</label>
+                        <select id="scar_control" name="scar_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguna">Ninguna</option>
+                            <option value="pequeña">Pequeña</option>
+                            <option value="mediana">Mediana</option>
+                            <option value="grande">Grande</option>
+                            <option value="facial">Facial</option>
+                            <option value="corporal">Corporal</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="acne_control">🔴 Acné:</label>
+                        <select id="acne_control" name="acne_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguno">Ninguno</option>
+                            <option value="leve">Leve</option>
+                            <option value="moderado">Moderado</option>
+                            <option value="severo">Severo</option>
+                            <option value="ocasional">Ocasional</option>
+                            <option value="crónico">Crónico</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="wrinkle_control">👴 Arrugas:</label>
+                        <select id="wrinkle_control" name="wrinkle_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguna">Ninguna</option>
+                            <option value="líneas_finas">Líneas Finas</option>
+                            <option value="moderadas">Moderadas</option>
+                            <option value="profundas">Profundas</option>
+                            <option value="patas_gallo">Patas de Gallo</option>
+                            <option value="líneas_frente">Líneas de Frente</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="hair_style_control">💇 Estilo de Cabello:</label>
+                        <select id="hair_style_control" name="hair_style_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="liso">Liso</option>
+                            <option value="ondulado">Ondulado</option>
+                            <option value="rizado">Rizado</option>
+                            <option value="muy_rizado">Muy Rizado</option>
+                            <option value="corte_pixie">Corte Pixie</option>
+                            <option value="bob">Bob</option>
+                            <option value="capas">Capas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="makeup_control">💄 Tipo de Maquillaje:</label>
+                        <select id="makeup_control" name="makeup_control">
+                            <option value="sin_maquillaje">Sin Maquillaje</option>
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="natural">Natural</option>
+                            <option value="mínimo">Mínimo</option>
+                            <option value="ligero">Ligero</option>
+                            <option value="medio">Medio</option>
+                            <option value="pesado">Pesado</option>
+                            <option value="dramático">Dramático</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="clothing_type_control">👔 Tipo de Ropa:</label>
+                        <select id="clothing_type_control" name="clothing_type_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="traje_negocio">Traje de Negocio</option>
+                            <option value="camisa_casual">Camisa Casual</option>
+                            <option value="camiseta">Camiseta</option>
+                            <option value="polo">Polo</option>
+                            <option value="camisa_formal">Camisa Formal</option>
+                            <option value="blazer">Blazer</option>
+                            <option value="suéter">Suéter</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="clothing_color_control">🎨 Color de Ropa:</label>
+                        <select id="clothing_color_control" name="clothing_color_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="negro">Negro</option>
+                            <option value="gris">Gris</option>
+                            <option value="azul_marino">Azul Marino</option>
+                            <option value="azul">Azul</option>
+                            <option value="rojo">Rojo</option>
+                            <option value="verde">Verde</option>
+                            <option value="marrón">Marrón</option>
+                            <option value="beige">Beige</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="background_control">🖼️ Fondo:</label>
+                        <select id="background_control" name="background_control">
+                            <option value="blanco_solido">Blanco Sólido</option>
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="gris_claro">Gris Claro</option>
+                            <option value="neutral">Neutral</option>
+                            <option value="profesional">Profesional</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="facial_hair_control">🧔 Vello Facial:</label>
+                        <select id="facial_hair_control" name="facial_hair_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguno">Ninguno</option>
+                            <option value="ligero">Ligero</option>
+                            <option value="moderado">Moderado</option>
+                            <option value="pesado">Pesado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="beard_control">🧔 Barba:</label>
+                        <select id="beard_control" name="beard_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguna">Ninguna</option>
+                            <option value="barba_incipiente">Barba Incipiente</option>
+                            <option value="corta">Corta</option>
+                            <option value="media">Media</option>
+                            <option value="larga">Larga</option>
+                            <option value="completa">Completa</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="mustache_control">🧔 Bigote:</label>
+                        <select id="mustache_control" name="mustache_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="ninguno">Ninguno</option>
+                            <option value="ligero">Ligero</option>
+                            <option value="medio">Medio</option>
+                            <option value="grueso">Grueso</option>
+                            <option value="manillar">Manillar</option>
+                        </select>
+                    </div>
+                    
+                    <div class="diversity-control">
+                        <label for="physical_complexion_control">🏃 Complexión Física:</label>
+                        <select id="physical_complexion_control" name="physical_complexion_control">
+                            <option value="aleatorio">Aleatorio</option>
+                            <option value="muy_delgado">Muy Delgado</option>
+                            <option value="delgado">Delgado</option>
+                            <option value="ligeramente_delgado">Ligeramente Delgado</option>
+                            <option value="normal">Normal</option>
+                            <option value="ligeramente_sobrepeso">Ligeramente Sobrepeso</option>
+                            <option value="sobrepeso">Sobrepeso</option>
+                            <option value="obeso">Obeso</option>
+                            <option value="muy_obeso">Muy Obeso</option>
+                            <option value="atlético">Atlético</option>
+                            <option value="musculoso">Musculoso</option>
+                            <option value="delgado_atlético">Delgado Atlético</option>
+                            <option value="robusto">Robusto</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Massive Tab -->
+        <div id="massive-tab" class="tab-content massive-tab">
+            <h2>📄 Generación Masiva</h2>
+            <p>Generar imágenes basadas en datasets JSON/PNG existentes con diversidad genética.</p>
+            <!-- Massive generation content will be added here -->
+        </div>
+
+        <!-- SAIME Tab -->
+        <div id="saime-tab" class="tab-content saime-tab">
+            <h2>📐 Configuración SAIME</h2>
+            <p>Configurar especificaciones SAIME para fotos de pasaporte.</p>
+            <!-- SAIME configuration content will be added here -->
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'genetic';
+        let isGenerating = false;
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            currentTab = tabName;
+        }
+
+        // Terminal functions
+        function addTerminalLine(message, type = 'info') {
+            const terminalContent = document.getElementById('terminal-content');
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = `terminal-line terminal-${type}`;
+            line.innerHTML = `<span class="terminal-timestamp">[${timestamp}]</span> ${message}`;
+            terminalContent.appendChild(line);
+            terminalContent.scrollTop = terminalContent.scrollHeight;
+        }
+
+        function updateTerminalStatus(status) {
+            document.getElementById('terminal-status').textContent = status;
+        }
+
+        function clearTerminal() {
+            const terminalContent = document.getElementById('terminal-content');
+            terminalContent.innerHTML = '';
+        }
+
+        // Generate genetic images
+        async function generateGenetic() {
+            if (isGenerating) return;
+            
+            isGenerating = true;
+            document.querySelector('.btn-generate').textContent = '⏳ Generando...';
+            document.querySelector('.btn-generate').disabled = true;
+            
+            // Clear terminal and show initial status
+            clearTerminal();
+            updateTerminalStatus('Iniciando...');
+            addTerminalLine('🧬 Iniciando generación genética...', 'info');
+            
+            try {
+                const formData = new FormData();
+                formData.append('nacionalidad', document.getElementById('nacionalidad').value);
+                formData.append('genero', document.getElementById('genero').value);
+                formData.append('region', document.getElementById('region').value);
+                formData.append('edad_min', document.getElementById('edad_min').value);
+                formData.append('edad_max', document.getElementById('edad_max').value);
+                formData.append('cantidad', document.getElementById('cantidad').value);
+                formData.append('cfg_scale', document.getElementById('cfg_scale').value);
+                formData.append('steps', document.getElementById('steps').value);
+                
+                // Add all diversity controls
+                document.querySelectorAll('#genetic-tab select').forEach(select => {
+                    if (select.name && select.name !== 'nacionalidad' && select.name !== 'genero' && select.name !== 'region') {
+                        formData.append(select.name, select.value);
+                    }
+                });
+                
+                addTerminalLine(`📊 Parámetros: ${document.getElementById('cantidad').value} imágenes, ${document.getElementById('genero').value}, ${document.getElementById('nacionalidad').value}`, 'info');
+                addTerminalLine('🔄 Enviando solicitud al servidor...', 'info');
+                
+                const response = await fetch('/api/generate/genetic', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    addTerminalLine('✅ Generación iniciada exitosamente!', 'success');
+                    updateTerminalStatus('Generando...');
+                    
+                    // Start monitoring progress
+                    monitorGeneration();
+                    refreshFiles();
+                } else {
+                    addTerminalLine('❌ Error: ' + (result.error || 'Error desconocido'), 'error');
+                    updateTerminalStatus('Error');
+                }
+            } catch (error) {
+                console.error('Generation error:', error);
+                addTerminalLine('❌ Error: ' + error.message, 'error');
+                updateTerminalStatus('Error');
+            } finally {
+                isGenerating = false;
+                document.querySelector('.btn-generate').textContent = '🧬 Generar Imágenes Genéticas';
+                document.querySelector('.btn-generate').disabled = false;
+            }
+        }
+
+        // Monitor generation progress
+        async function monitorGeneration() {
+            const checkInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/status');
+                    const data = await response.json();
+                    
+                    if (data.generation_status.running) {
+                        const progress = data.generation_status.progress;
+                        const current = data.generation_status.current;
+                        const total = data.generation_status.total;
+                        
+                        addTerminalLine(`🔄 Progreso: ${current}/${total} (${progress}%)`, 'progress');
+                        updateTerminalStatus(`Generando ${current}/${total}`);
+                    } else {
+                        clearInterval(checkInterval);
+                        if (data.generation_status.progress === 100) {
+                            addTerminalLine('✅ Generación completada exitosamente!', 'success');
+                            addTerminalLine(`📁 Archivos guardados en: outputs/`, 'info');
+                            updateTerminalStatus('Completado');
+                            refreshFiles();
+                        } else {
+                            updateTerminalStatus('Listo');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Monitor error:', error);
+                    clearInterval(checkInterval);
+                }
+            }, 2000);
+        }
+
+        // Stop generation
+        async function stopGeneration() {
+            try {
+                await fetch('/api/stop_generation', { method: 'POST' });
+                alert('⏹️ Generación detenida');
+            } catch (error) {
+                console.error('Stop error:', error);
+            }
+        }
+
+        // Refresh files
+        async function refreshFiles() {
+            try {
+                const response = await fetch('/api/outputs');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('file-count').textContent = `${data.files.length} archivos`;
+                } else {
+                    document.getElementById('file-count').textContent = '0 archivos';
+                }
+            } catch (error) {
+                console.error('Error refreshing files:', error);
+                document.getElementById('file-count').textContent = '0 archivos';
+            }
+        }
+
+        // Open output folder
+        async function openOutputFolder() {
+            try {
+                const response = await fetch('/api/open_output_folder', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert('📁 Carpeta de salida abierta');
+                } else {
+                    alert('❌ Error: ' + (data.error || 'No se pudo abrir la carpeta'));
+                }
+            } catch (error) {
+                console.error('Error opening folder:', error);
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Load models
+        async function loadModels() {
+            try {
+                const response = await fetch('/api/models');
+                const data = await response.json();
+                const select = document.getElementById('model-select');
+                
+                console.log('Models API response:', data); // Debug log
+                
+                if (data.success && data.models && data.models.length > 0) {
+                    select.innerHTML = data.models.map(model => 
+                        `<option value="${model.title || model.model_name || model}">${model.title || model.model_name || model}</option>`
+                    ).join('');
+                    
+                    console.log('Models loaded:', data.models.length); // Debug log
+                    
+                    // Add change event listener
+                    select.addEventListener('change', async function() {
+                        const selectedModel = this.value;
+                        console.log('Model selected:', selectedModel); // Debug log
+                        if (selectedModel) {
+                            try {
+                                const response = await fetch('/api/set_model', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ model_name: selectedModel })
+                                });
+                                const result = await response.json();
+                                console.log('Model change result:', result); // Debug log
+                                if (result.success) {
+                                    alert('✅ Modelo cambiado exitosamente');
+                                    updateStatus(); // Refresh status to show new model
+                                } else {
+                                    alert('❌ Error cambiando modelo: ' + (result.error || 'Error desconocido'));
+                                }
+                            } catch (error) {
+                                console.error('Error changing model:', error);
+                                alert('❌ Error: ' + error.message);
+                            }
+                        }
+                    });
+                } else {
+                    console.error('No models found or API error:', data);
+                    select.innerHTML = '<option value="">Error cargando modelos</option>';
+                }
+            } catch (error) {
+                console.error('Error loading models:', error);
+                document.getElementById('model-select').innerHTML = '<option value="">Error cargando modelos</option>';
+            }
+        }
+
+        // Update status
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                document.getElementById('webui-status').textContent = 
+                    data.webui_connected ? '✅ WebUI Status: Conectado' : '❌ WebUI Status: Desconectado';
+                
+                document.getElementById('generation-status').textContent = 
+                    data.generation_status.running ? 
+                    `🔄 Generación: ${data.generation_status.current}/${data.generation_status.total}` : 
+                    '⏹️ Generación: Listo';
+            } catch (error) {
+                console.error('Error updating status:', error);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadModels();
+            refreshFiles();
+            updateStatus();
+            
+            // Update status every 5 seconds
+            setInterval(updateStatus, 5000);
+        });
+    </script>
+</body>
+</html>

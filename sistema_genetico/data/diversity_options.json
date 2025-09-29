@@ -1,0 +1,140 @@
+{
+  "beauty_levels": [
+    "random", "stunning", "very_beautiful", "beautiful", "attractive", 
+    "average", "plain", "unattractive", "homely", "ugly"
+  ],
+  "skin_tones": [
+    "random", "porcelain", "fair", "light", "medium_light", "medium", 
+    "medium_dark", "dark", "very_dark", "ebony", "olive", "golden", "bronze"
+  ],
+  "hair_colors": [
+    "random", "black", "dark_brown", "brown", "light_brown", "auburn", 
+    "red", "strawberry_blonde", "blonde", "platinum_blonde", "white", 
+    "silver", "gray", "salt_and_pepper", "dyed_blue", "dyed_pink", "dyed_purple"
+  ],
+  "hair_lengths": [
+    "random", "bald", "buzz_cut", "very_short", "short", "medium_short", 
+    "medium", "medium_long", "long", "very_long", "waist_length", "floor_length"
+  ],
+  "hair_styles": [
+    "random", "straight", "wavy", "curly", "very_curly", "coily", 
+    "pixie_cut", "bob", "pixie_bob", "lob", "layered", "shag", 
+    "pompadour", "quiff", "fade", "undercut", "man_bun", "ponytail", 
+    "braids", "dreadlocks", "afro", "bangs", "side_swept", "parted"
+  ],
+  "eye_colors": [
+    "random", "brown", "dark_brown", "light_brown", "hazel", "amber", 
+    "green", "blue", "light_blue", "dark_blue", "gray", "violet", "heterochromia"
+  ],
+  "eye_shapes": [
+    "random", "almond", "round", "oval", "upturned", "downturned", 
+    "hooded", "deep_set", "wide_set", "close_set", "monolid", "double_lid"
+  ],
+  "face_shapes": [
+    "random", "oval", "round", "square", "heart", "diamond", "triangle", 
+    "oblong", "pear", "inverted_triangle"
+  ],
+  "nose_shapes": [
+    "random", "straight", "roman", "button", "bulbous", "aquiline", 
+    "snub", "hooked", "wide", "narrow", "upturned", "downturned"
+  ],
+  "lip_shapes": [
+    "random", "full", "thin", "wide", "narrow", "heart_shaped", 
+    "bow_shaped", "asymmetrical", "defined", "undefined", "plump", "flat"
+  ],
+  "jawlines": [
+    "random", "defined", "soft", "angular", "round", "square", 
+    "pointed", "strong", "weak", "asymmetrical"
+  ],
+  "cheekbones": [
+    "random", "high", "low", "prominent", "flat", "defined", 
+    "soft", "angular", "round", "asymmetrical"
+  ],
+  "eyebrows": [
+    "random", "thick", "thin", "arched", "straight", "rounded", 
+    "angled", "sparse", "bushy", "defined", "natural", "shaped"
+  ],
+  "skin_textures": [
+    "random", "smooth", "rough", "oily", "dry", "combination", 
+    "mature", "youthful", "blemished", "clear", "scarred", "uneven"
+  ],
+  "makeup_types": [
+    "random", "natural", "minimal", "light", "medium", "heavy", 
+    "dramatic", "glamorous", "no_makeup", "smoky_eyes", "bold_lips", 
+    "colorful", "vintage", "modern", "artistic"
+  ],
+  "clothing_types": [
+    "random", "business_suit", "casual_shirt", "t_shirt", "polo_shirt", 
+    "dress_shirt", "blazer", "sweater", "hoodie", "tank_top", "vest", 
+    "formal_dress", "casual_dress", "blouse", "cardigan", "jacket"
+  ],
+  "clothing_colors": [
+    "random", "white", "black", "gray", "navy", "blue", "red", "green", 
+    "brown", "beige", "pink", "purple", "yellow", "orange", "maroon", 
+    "burgundy", "teal", "turquoise", "coral", "cream", "charcoal"
+  ],
+  "backgrounds": [
+    "random", "white_solid", "light_gray", "neutral", "professional", 
+    "studio_lighting", "soft_lighting", "bright_lighting", "natural_light"
+  ],
+  "freckles": [
+    "random", "none", "light", "medium", "heavy", "scattered", 
+    "concentrated", "cheek_freckles", "nose_freckles", "full_face"
+  ],
+  "moles": [
+    "random", "none", "one", "few", "several", "many", "facial", 
+    "body", "small", "large", "raised", "flat", "dark", "light"
+  ],
+  "scars": [
+    "random", "none", "small", "medium", "large", "facial", "body", 
+    "surgical", "accident", "acne_scars", "chicken_pox", "faded", "prominent"
+  ],
+  "acne": [
+    "random", "none", "mild", "moderate", "severe", "occasional", 
+    "chronic", "hormonal", "adult_acne", "teenage_acne", "cleared", "active"
+  ],
+  "wrinkles": [
+    "random", "none", "fine_lines", "moderate", "deep", "crow_feet", 
+    "forehead_lines", "smile_lines", "neck_lines", "age_appropriate", "premature"
+  ],
+  "facial_hair": [
+    "random", "none", "light", "moderate", "heavy", "stubble", 
+    "thick", "sparse", "dense", "patchy", "full_coverage"
+  ],
+  "beard_types": [
+    "random", "none", "stubble", "short", "medium", "long", "full", 
+    "goatee", "mustache_only", "sideburns", "chinstrap", "van_dyke", 
+    "circle_beard", "soul_patch", "mutton_chops", "clean_shaven"
+  ],
+  "mustache_types": [
+    "random", "none", "light", "medium", "thick", "handlebar", 
+    "pencil", "chevron", "horseshoe", "walrus", "imperial", "fu_manchu"
+  ],
+  "body_types": [
+    "random", "ectomorph", "mesomorph", "endomorph", "athletic", 
+    "muscular", "lean", "average", "curvy", "petite", "tall", "short"
+  ],
+  "body_weights": [
+    "random", "underweight", "normal", "overweight", "obese", 
+    "very_underweight", "slightly_overweight", "morbidly_obese", 
+    "athletic_build", "muscular_build", "lean_build", "stocky_build"
+  ],
+  "physical_complexion": [
+    "random", "very_thin", "thin", "slightly_thin", "normal", 
+    "slightly_overweight", "overweight", "obese", "very_obese", 
+    "athletic", "muscular", "lean", "stocky", "broad_shouldered"
+  ],
+  "clothing_styles": [
+    "random", "formal", "business_casual", "casual", "sporty", 
+    "elegant", "trendy", "classic", "modern", "vintage", "bohemian", 
+    "minimalist", "edgy", "preppy", "streetwear", "professional"
+  ],
+  "clothing_fit": [
+    "random", "loose", "regular", "fitted", "tight", "oversized", 
+    "tailored", "relaxed", "slim_fit", "regular_fit", "wide_fit"
+  ],
+  "accessories": [
+    "random", "none", "minimal", "simple", "moderate", "elaborate", 
+    "professional", "casual", "formal", "trendy", "classic", "vintage"
+  ]
+}

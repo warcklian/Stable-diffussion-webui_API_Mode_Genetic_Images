@@ -16,3 +16,7 @@ sistema_genetico/data/*.csv
 .DS_Store
 .idea/
 .vscode/
+
+stable-diffusion-webui_Warcklian/
+outputs/
+models/stablediffusion/*.safetensors
